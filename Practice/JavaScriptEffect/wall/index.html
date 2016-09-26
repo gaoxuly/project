@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        div{
+            width: 200px;
+            height: 200px;
+            background: lightcyan;
+            font-size: 30px;
+            text-align: center;
+            line-height: 200px;
+            position: relative;
+            overflow: hidden;
+            float: left;
+            margin:50px 10px;
+            background-position: center;
+            background-repeat:  no-repeat;
+            box-shadow: 0 0 10px #ccc;
+        }
+        div span{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left:-200px;
+            top:0;
+            background: darkgreen;
+            color:white;
+            opacity: 0.5;
+            filter:alpha(opacity=50)
+
+        }
+    </style>
+</head>
+<body>
+<div class="bg1"><span>我是遮罩层1</span></div>
+<div class="bg2"><span>我是遮罩层2</span></div>
+<div class="bg3"><span>我是遮罩层3</span></div>
+<div class="bg4"><span>我是遮罩层4</span></div>
+<script src="../../JDK/utils.js"></script>
+<script src="../../JDK/move.js"></script>
+<script>
+    var aDiv=document.getElementsByTagName('div');
+    for(var i=0; i<aDiv.length; i++){
+        move({
+            ele:aDiv[i]
+        })
+    }
+    function hoverDir(obj,e){
+        var r=obj.offsetWidth/2;
+        var x=obj.offsetLeft+r- e.clientX;
+        var y=obj.offsetTop+r- e.clientY;
+        return  Math.round((Math.atan2(y,x)*180/Math.PI+180)/90)%4;
+    }
+    function move(opt){
+        var oDiv=opt.ele;
+        var effect=opt.effect||0;
+        var time=opt.time||300;
+        var oSpan=oDiv.getElementsByTagName('span')[0];
+        oDiv.onmouseover=function(e){
+            e=e||window.event;
+            var oTo= e.fromElement||relatedTarget;
+            if(this.contains(oTo)) return;
+            var n=hoverDir(this,e);
+            switch (n){
+                case 0:
+                    utils.css(oSpan,{left:200,top:0});
+                    break;
+                case 1:
+                    utils.css(oSpan,{left:0,top:200});
+                    break;
+                case 2:
+                    utils.css(oSpan,{left:-200,top:0});
+                    break;
+                default :
+                    utils.css(oSpan,{left:0,top:-200});
+                    break;
+            }
+            animate(oSpan,{left:0,top:0},time,effect)
+        };
+        oDiv.onmouseleave=function(e){
+            e=e||window.event;
+            var oTo= e.toElement||relatedTarget;
+            if(this.contains(oTo)) return;
+            var n=hoverDir(this,e);
+            switch (n){
+                case 0:
+                    animate(oSpan,{left:200,top:0},time,effect);
+                    break;
+                case 1:
+                    animate(oSpan,{left:0,top:200},time,effect);
+                    break;
+                case 2:
+                    animate(oSpan,{left:-200,top:0},time,effect);
+                    break;
+                default :
+                    animate(oSpan,{left:0,top:-200},time,effect);
+                    break;
+            }
+
+
+        }
+    }
+</script>
+</body>
+</html>
